@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10,24 +19,22 @@ if (PROD == false) {
     config();
 }
 // IMPORTS
-const morgan_1 = __importDefault(require("morgan"));
-const cors_1 = __importDefault(require("cors"));
-const method_override_1 = __importDefault(require("method-override"));
-const express_1 = __importDefault(require("express"));
-const app = (0, express_1.default)();
-require('./database');
-// MIDLEWARES
-app.use((0, method_override_1.default)('_method'));
-app.use(express_1.default.urlencoded({ extended: true }));
-app.use(express_1.default.json());
-app.use((0, cors_1.default)());
-app.use((0, morgan_1.default)('tiny'));
-// ROUTES
+const fastify_1 = __importDefault(require("fastify"));
+const cors_1 = __importDefault(require("@fastify/cors"));
 const routes_1 = __importDefault(require("./routes"));
-app.use('/api', routes_1.default);
-// SERVER
-app.set('port', process.env.PORT || 3400);
-app.listen(app.get('port'), () => {
-    console.log('server on port:' + app.get('port'));
-});
+function start() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const app = (0, fastify_1.default)({ logger: true });
+        yield app.register(cors_1.default);
+        require('./database');
+        // ROUTES
+        new routes_1.default(app, '/api').router();
+        // SERVER
+        const PORT = process.env.PORT || 3560;
+        app.listen(PORT, () => {
+            console.log('server on port:' + PORT);
+        });
+    });
+}
+start();
 //# sourceMappingURL=index.js.map

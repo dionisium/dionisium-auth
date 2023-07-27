@@ -6,26 +6,24 @@ if(PROD == false){
 }
 
 // IMPORTS
-import morgan from 'morgan';
-import cors from 'cors';
+import fastify from 'fastify';
+import cors from '@fastify/cors';
 import MOD from 'method-override';
-import express from 'express';
-const app = express();
-require('./database');
-
-// MIDLEWARES
-app.use(MOD('_method'));
-app.use(express.urlencoded({extended:true}));
-app.use(express.json());
-app.use(cors());
-app.use(morgan('tiny'));
-
-// ROUTES
 import routes from './routes';
-app.use('/api' , routes);
 
-// SERVER
-app.set('port', process.env.PORT || 3400);
-app.listen(app.get('port'), ()=>{
-    console.log('server on port:' + app.get('port'));
-});
+async function start():Promise<void>{
+    const app = fastify({logger:true});
+    await app.register(cors);
+    require('./database');
+
+    // ROUTES
+    new routes(app, '/api').router();
+
+    // SERVER
+    const PORT = process.env.PORT || 3560;
+    app.listen(PORT, ()=>{
+        console.log('server on port:' + PORT);
+    });
+}
+
+start();

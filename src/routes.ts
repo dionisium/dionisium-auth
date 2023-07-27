@@ -1,14 +1,20 @@
-import { Router } from 'express';
-const router = Router();
+// MODULES
+import { FastifyInstance } from "fastify/types/instance";
 
-import controller_import from './controller'; 
-const controller = new controller_import();
+// CONTROLLERS
+import Controller from './controller'; 
+
+// LIBS
 import validator from './libs/validator';
 
-router.post('/signup', validator, controller.signup);
-router.post('/signin', validator, controller.signin);
-router.post('/verify', validator, controller.verify);
-router.post('/withGoogle', validator, controller.withGoogle);
-router.post('/update/avatar', validator, controller.changeAvatar);
+export default class extends Controller {
+    constructor(private routes:FastifyInstance, private path:string){super()}
 
-export default router;
+    router(){
+        this.routes.post(this.path + '/signin', {preValidation: validator}, this.signin);
+        this.routes.post(this.path + '/signup', {preValidation: validator}, this.signup);
+        this.routes.post(this.path + '/verify', {preValidation: validator}, this.verify);
+        this.routes.post(this.path + '/withGoogle', {preValidation: validator}, this.withGoogle);
+        this.routes.post(this.path + '/update/avatar', {preValidation: validator}, this.changeAvatar);
+    }
+}

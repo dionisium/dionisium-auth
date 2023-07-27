@@ -35,18 +35,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// MODELS
 const USERS_1 = __importStar(require("./models/USERS"));
+// LIBS
 const jsonwebtoken_config_1 = __importDefault(require("./libs/jsonwebtoken_config"));
-class ctrl extends jsonwebtoken_config_1.default {
+const JWTLibs = new jsonwebtoken_config_1.default();
+class default_1 {
     signup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, email, password } = req.body;
             const userFound = yield USERS_1.default.findOne({ email });
             if (userFound) {
-                return res.status(401).json({ error: 'the email already is use' });
+                return res.code(401).send({ error: 'the email already is use' });
             }
             if (password.length < 8) {
-                return res.status(401).json({ error: 'the password is too short' });
+                return res.code(401).send({ error: 'the password is too short' });
             }
             const user = new USERS_1.default({
                 name,
@@ -56,8 +59,8 @@ class ctrl extends jsonwebtoken_config_1.default {
                 plain: 'started pack'
             });
             yield user.save();
-            const token = yield ctrl.sing(user._id);
-            return res.status(200).json({ token: token, plain: user.plain, avatar: user.avatar });
+            const token = yield JWTLibs.sing(user._id);
+            return res.code(200).send({ token: token, plain: user.plain, avatar: user.avatar });
         });
     }
     signin(req, res) {
@@ -65,14 +68,14 @@ class ctrl extends jsonwebtoken_config_1.default {
             const { email, password } = req.body;
             const userFound = yield USERS_1.default.findOne({ email });
             if (!userFound) {
-                return res.status(401).json({ error: 'the email or password are incorrect' });
+                return res.code(401).send({ error: 'the email or password are incorrect' });
             }
             const result = yield (0, USERS_1.comparePassword)(userFound.password, password);
             if (result == false) {
-                return res.status(401).json({ error: 'the email or password are incorrect' });
+                return res.code(401).send({ error: 'the email or password are incorrect' });
             }
-            const token = yield ctrl.sing(userFound._id);
-            return res.status(200).json({ token: token, plain: userFound.plain, avatar: userFound.avatar });
+            const token = yield JWTLibs.sing(userFound._id);
+            return res.code(200).send({ token: token, plain: userFound.plain, avatar: userFound.avatar });
         });
     }
     withGoogle(req, res) {
@@ -81,8 +84,8 @@ class ctrl extends jsonwebtoken_config_1.default {
                 const { name, email, id } = req.body;
                 const userFound = yield USERS_1.default.findOne({ email });
                 if (userFound) {
-                    const token = yield ctrl.sing(userFound._id);
-                    return res.status(200).json({ token: token, plain: userFound.plain, avatar: userFound.avatar });
+                    const token = yield JWTLibs.sing(userFound._id);
+                    return res.code(200).send({ token: token, plain: userFound.plain, avatar: userFound.avatar });
                 }
                 const user = new USERS_1.default({
                     name,
@@ -92,12 +95,12 @@ class ctrl extends jsonwebtoken_config_1.default {
                     plain: 'started pack'
                 });
                 yield user.save();
-                const token = yield ctrl.sing(user._id);
-                return res.status(200).json({ token: token, plain: user.plain, avatar: user.avatar });
+                const token = yield JWTLibs.sing(user._id);
+                return res.code(200).send({ token: token, plain: user.plain, avatar: user.avatar });
             }
             catch (error) {
                 console.log(error);
-                return res.status(400).json({ error: 'error unexpected' });
+                return res.code(400).send({ error: 'error unexpected' });
             }
         });
     }
@@ -105,17 +108,16 @@ class ctrl extends jsonwebtoken_config_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { token } = req.body;
-                const decoded = yield ctrl.decoded(token);
+                const decoded = yield JWTLibs.decoded(token);
                 if (decoded == 'error unexpected') {
-                    return res.status(401).json({ error: 'you is not authorized or the token is expired' });
+                    return res.code(401).send({ error: 'you is not authorized or the token is expired' });
                 }
-                const userFound = yield USERS_1.default.findById(decoded._id);
-                const newtoken = yield ctrl.sing(decoded._id);
-                return res.status(200).json({ token: newtoken, plain: userFound.plain, avatar: userFound.avatar });
+                const userFound = yield USERS_1.default.findById(decoded === null || decoded === void 0 ? void 0 : decoded["_id"]);
+                return res.code(200).send({ token: token, plain: userFound.plain, avatar: userFound.avatar });
             }
             catch (error) {
                 console.log(error);
-                return res.status(400).json({ error: 'error unexpected' });
+                return res.code(400).send({ error: 'error unexpected' });
             }
         });
     }
@@ -123,19 +125,19 @@ class ctrl extends jsonwebtoken_config_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { token, avatar } = req.body;
-                const decoded = yield ctrl.decoded(token);
+                const decoded = yield JWTLibs.decoded(token);
                 if (decoded == 'error unexpected') {
-                    return res.status(401).json({ error: 'you is not authorized or the token is expired' });
+                    return res.code(401).send({ error: 'you is not authorized or the token is expired' });
                 }
-                yield USERS_1.default.findByIdAndUpdate(decoded._id, { avatar: avatar });
-                res.status(200).json({ message: 'update' });
+                yield USERS_1.default.findByIdAndUpdate(decoded === null || decoded === void 0 ? void 0 : decoded["_id"], { avatar: avatar });
+                res.code(200).send({ message: 'update' });
             }
             catch (error) {
                 console.log(error);
-                return res.status(400).json({ error: 'error unexpected' });
+                return res.code(400).send({ error: 'error unexpected' });
             }
         });
     }
 }
-exports.default = ctrl;
+exports.default = default_1;
 //# sourceMappingURL=controller.js.map

@@ -3,15 +3,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const router = (0, express_1.Router)();
+// CONTROLLERS
 const controller_1 = __importDefault(require("./controller"));
-const controller = new controller_1.default();
+// LIBS
 const validator_1 = __importDefault(require("./libs/validator"));
-router.post('/signup', validator_1.default, controller.signup);
-router.post('/signin', validator_1.default, controller.signin);
-router.post('/verify', validator_1.default, controller.verify);
-router.post('/withGoogle', validator_1.default, controller.withGoogle);
-router.post('/update/avatar', validator_1.default, controller.changeAvatar);
-exports.default = router;
+class default_1 extends controller_1.default {
+    constructor(routes, path) {
+        super();
+        this.routes = routes;
+        this.path = path;
+    }
+    router() {
+        this.routes.post(this.path + '/signin', { preValidation: validator_1.default }, this.signin);
+        this.routes.post(this.path + '/signup', { preValidation: validator_1.default }, this.signup);
+        this.routes.post(this.path + '/verify', { preValidation: validator_1.default }, this.verify);
+        this.routes.post(this.path + '/withGoogle', { preValidation: validator_1.default }, this.withGoogle);
+        this.routes.post(this.path + '/update/avatar', { preValidation: validator_1.default }, this.changeAvatar);
+    }
+}
+exports.default = default_1;
 //# sourceMappingURL=routes.js.map

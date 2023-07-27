@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class libs {
-    static sing(_id) {
+    sing(_id) {
         try {
             const token = jsonwebtoken_1.default.sign({ _id: _id }, process.env.JWT_KEY, {
                 expiresIn: (2 * 24 * 60 * 60)
@@ -17,7 +17,7 @@ class libs {
             return 'error unexpected';
         }
     }
-    static decoded(token) {
+    decoded(token) {
         try {
             const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_KEY);
             return decoded;
