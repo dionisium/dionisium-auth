@@ -8,7 +8,6 @@ if(PROD == false){
 // IMPORTS
 import fastify from 'fastify';
 import cors from '@fastify/cors';
-import MOD from 'method-override';
 import routes from './routes';
 
 async function start():Promise<void>{
@@ -20,9 +19,12 @@ async function start():Promise<void>{
     new routes(app, '/api').router();
 
     // SERVER
-    const PORT = process.env.PORT || 3560;
-    app.listen(PORT, ()=>{
-        console.log('server on port:' + PORT);
+    const PORT:number = typeof process.env.PORT == 'number' ? process.env.PORT : Number(process.env.PORT) ? Number(process.env.PORT) : 4560;
+    const HOST:string = process.env.HOST || 'localhost';
+    app.listen({port:PORT, host:HOST}, (_err, _address)=>{
+        console.info(_address);
+        console.log(`Sever run in ${HOST}:${PORT}`);
+        console.error(_err);
     });
 }
 
