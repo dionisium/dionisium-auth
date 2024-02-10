@@ -1,13 +1,11 @@
 export interface user{
+    _id:any,
     name:string,
     email:string,
     password:string,
     date:Date,
-    roles:[string],
-    plain:[string],
-    viewing:[viewing],
+    plain:string[],
     avatar:string,
-    _id:string
 }
 export interface viewing{
     name:string,

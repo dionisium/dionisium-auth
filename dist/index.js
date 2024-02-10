@@ -21,18 +21,21 @@ if (PROD == false) {
 // IMPORTS
 const fastify_1 = __importDefault(require("fastify"));
 const cors_1 = __importDefault(require("@fastify/cors"));
-const routes_1 = __importDefault(require("./routes"));
+const routes_1 = __importDefault(require("./server/routes"));
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, fastify_1.default)({ logger: true });
-        yield app.register(cors_1.default);
-        require('./database');
+        yield app.register(cors_1.default, { origin: true });
+        require('./server/database');
         // ROUTES
-        new routes_1.default(app, '/api').router();
+        app.register(routes_1.default, { prefix: '/api' });
         // SERVER
-        const PORT = process.env.PORT || 3560;
-        app.listen(PORT, () => {
-            console.log('server on port:' + PORT);
+        const PORT = typeof process.env.PORT == 'number' ? process.env.PORT : Number(process.env.PORT) ? Number(process.env.PORT) : 4560;
+        const HOST = process.env.HOST || 'localhost';
+        app.listen({ port: PORT, host: HOST }, (_err, _address) => {
+            console.info(_address);
+            console.log(`Sever run in ${HOST}:${PORT}`);
+            console.error(_err);
         });
     });
 }

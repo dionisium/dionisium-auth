@@ -8,15 +8,15 @@ if(PROD == false){
 // IMPORTS
 import fastify from 'fastify';
 import cors from '@fastify/cors';
-import routes from './routes';
+import routes from './server/routes';
 
 async function start():Promise<void>{
     const app = fastify({logger:true});
-    await app.register(cors);
-    require('./database');
+    await app.register(cors, {origin:true});
+    require('./server/database');
 
     // ROUTES
-    new routes(app, '/api').router();
+    app.register(routes, {prefix:'/api'})
 
     // SERVER
     const PORT:number = typeof process.env.PORT == 'number' ? process.env.PORT : Number(process.env.PORT) ? Number(process.env.PORT) : 4560;

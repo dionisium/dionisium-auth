@@ -15,14 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.comparePassword = exports.encryptPassword = void 0;
 const mongoose_1 = require("mongoose");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+// const viewing_schema = new Schema({
+//     name:{type:String, required:true},
+//     redirect:{type:String, required:true},
+//     thumnail:{type:String, required:true},
+//     minute:{type:String, required:true}
+// });
 const user_schema = new mongoose_1.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     date: { type: Date, default: Date.now() },
-    roles: [{ type: String, required: true }],
-    plain: [{ type: String, required: true }],
-    viewing: [{ type: Object, ref: 'viewing' }],
+    plain: { type: [String], required: true },
+    // viewing:{type:[Object], ref:'viewing'},
     avatar: { type: String, default: 'deku' }
 });
 function encryptPassword(password) {

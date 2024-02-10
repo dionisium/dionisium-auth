@@ -8,7 +8,7 @@ class libs {
     sing(_id) {
         try {
             const token = jsonwebtoken_1.default.sign({ _id: _id }, process.env.JWT_KEY, {
-                expiresIn: (2 * 24 * 60 * 60)
+                expiresIn: (7 * 24 * 60 * 60)
             });
             return token;
         }
@@ -23,7 +23,7 @@ class libs {
             return decoded;
         }
         catch (error) {
-            return 'error unexpected';
+            return false;
         }
     }
 }
